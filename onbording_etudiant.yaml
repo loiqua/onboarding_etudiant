@@ -1,0 +1,95 @@
+openapi: 3.0.3
+info:
+  title: API d'Onboarding Étudiant
+  description: API pour gérer les informations d'onboarding des étudiants.
+  version: 1.0.0
+servers:
+  - url: https://hei-api-onboarding-etudiant.com
+tags:
+  - name: etudiant
+    description: Opérations liées aux étudiants
+
+paths:
+  /etudiant/{reference}:
+    get:
+      tags:
+        - etudiant
+      summary: Obtenir les informations d'un étudiant par référence
+      parameters:
+        - name: reference
+          in: path
+          description: Référence de l'étudiant
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Succès de la requête
+          content:
+            application/json:
+              example:
+                nom: ANDRIAMAHALY ARINAINA
+                prenom: Barthélemy Loiqua
+                reference: STD22001
+                email: hei.loiqua@gmail.com
+                date_de_naissance: 5 juillet 2004
+                programme_d_etude: L1 en informatique chez hei ivandry
+        "404":
+          description: Étudiant non trouvé
+
+    delete:
+      tags:
+        - etudiant
+      summary: Supprimer les informations d'un étudiant par référence
+      parameters:
+        - name: reference
+          in: path
+          description: Référence de l'étudiant
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Suppression réussie
+        "404":
+          description: Étudiant non trouvé
+
+    put:
+      tags:
+        - etudiant
+      summary: Mettre à jour les informations d'un étudiant par référence
+      parameters:
+        - name: reference
+          in: path
+          description: Référence de l'étudiant
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nom:
+                  type: string
+                prenom:
+                  type: string
+                email:
+                  type: string
+                date_de_naissance:
+                  type: string
+                programme_d_etude:
+                  type: string
+              example:
+                nom: Nouveau Nom
+                prenom: Nouveau Prenom
+                email: nouveau.email@example.com
+                date_de_naissance: 1 janvier 2000
+                programme_d_etude: Nouveau programme
+      responses:
+        "200":
+          description: Mise à jour réussie
+        "404":
+          description: Étudiant non trouvé
