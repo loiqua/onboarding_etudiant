@@ -9,14 +9,14 @@ tags:
   - name: student
     description: Opérations liées aux étudiants
   - name: teacher
-    description: Opérations liées aux enseignants
+    description: Opérations liées aux professeur
 
 paths:
   /student:
     post:
       tags:
         - student
-      summary: Créer un nouvel étudiant
+      summary: Ajouter un nouvel étudiant
       requestBody:
         required: true
         content:
@@ -35,14 +35,15 @@ paths:
                 programme_d_etude:
                   type: string
                 groupe:
-                  type: string   
+                  type: string
+                  enum: [H1, H2, H3, H4]
               example:
-                nom: Nouveau Nom
-                prenom: Nouveau Prénom
+                nom: nouveau nom
+                prenom: nouveau prenom
                 email: hei.nom@gmail.com
-                date_de_naissance: date de naissance
-                programme_d_etude: L1
-                groupe: H.    
+                date_de_naissance: ....
+                programme_d_etude: L1 HEI
+                groupe: H1
       responses:
         "201":
           description: Création réussie
@@ -50,7 +51,7 @@ paths:
             application/json:
               example:
                 message: Étudiant créé avec succès
-                reference: STD22012
+                reference: STD22002
         "400":
           description: Requête invalide
 
@@ -66,12 +67,6 @@ paths:
           required: true
           schema:
             type: string
-        - name: groupe
-          in: query
-          description: Groupe de l'étudiant (facultatif)
-          required: false
-          schema:
-            type: string
       responses:
         "200":
           description: Succès de la requête
@@ -83,12 +78,29 @@ paths:
                 reference: STD22001
                 email: hei.loiqua@gmail.com
                 date_de_naissance: 5 juillet 2004
-                programme_d_etude: L1 en informatique chez hei ivandry
+                programme_d_etude: L1 HEI
                 groupe: H4
+
         "404":
           description: Étudiant non trouvé
 
-  /student/{reference}:
+    delete:
+      tags:
+        - student
+      summary: Supprimer les informations d'un étudiant par référence
+      parameters:
+        - name: reference
+          in: path
+          description: Référence de l'étudiant
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Suppression réussie
+        "404":
+          description: Étudiant non trouvé
+
     put:
       tags:
         - student
@@ -118,82 +130,73 @@ paths:
                 programme_d_etude:
                   type: string
                 groupe:
-                  type: string 
+                  type: string
+                  enum: [H1, H2, H3, H4]
               example:
-                nom: Nouveau Nom
-                prenom: Nouveau Prénom
+                nom: nouveau nom
+                prenom: nouveau prenom
                 email: hei.nom@gmail.com
-                date_de_naissance: 4 fevrier 2002
-                programme_d_etude: Nouveau programme
-                groupe: H.
+                date_de_naissance: 5 janvier 2003
+                programme_d_etude: L1 HEI
+                groupe: H3
       responses:
         "200":
           description: Mise à jour réussie
         "404":
           description: Étudiant non trouvé
-
-  /student/{reference}:
-    delete:
-      tags:
-        - student
-      summary: Supprimer les informations d'un étudiant par référence
-      parameters:
-        - name: reference
-          in: path
-          description: Référence de l'étudiant
-          required: true
-          schema:
-            type: string
-      responses:
-        "204":
-          description: Suppression réussie
-        "404":
-          description: Étudiant non trouvé
-
   /teacher:
-    get:
+    post:
       tags:
         - teacher
-      summary: Obtenir la liste des enseignants
+      summary: Ajouter un nouveau professeur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nom:
+                  type: string
+                prenom:
+                  type: string
+                email:
+                  type: string
+                matieres:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      Nom_matiere:
+                        type: string
+                      code_matiere:
+                        type: string
+              example:
+                nom: nouveau nom
+                prenom: nouveau prenom
+                email: nom.hei@gmail.com
+                matieres:
+                  - Nom_matiere: mathematique
+                    code_matiere: THEORIE1
       responses:
-        "200":
-          description: Succès de la requête
+        "201":
+          description: Création réussie
           content:
             application/json:
               example:
-                - nom: TOKIMAHERY
-                  prenom: RAMAROZAKA
-                  cours:
-                    - nom_du_cours: Algoritmique
-                      code_du_cours: PROG1
-                      duree: 2h
-                    - nom_du_cours: web
-                      code_du_cours: WEB1
-                      duree: 2h
-                - nom: Sandrine
-                  prenom: Ramaroson
-                  cours:
-                    - nom_du_cours: Gestion de Projet
-                      code_du_cours: MGT1
-                      duree: 2h
-                 - nom: Bako
-                  prenom: Harry
-                  cours:
-                    - nom_du_cours: Systeme d exploitation
-                      code_du_cours: SYS1
-                      duree: 2h
-        "404":
-          description: Enseignants non trouvés
+                message: Professeur créé avec succès
+        "400":
+          description: Requête invalide
 
-  /teacher/{code_du_cours}:
+  /teacher/{code_matiere}:
     get:
       tags:
         - teacher
-      summary: Obtenir les informations sur un enseignant par code du cours
+      summary: Obtenir les informations d'un professeur par code de matière
       parameters:
-        - name: code_du_cours
+        - name: code_matiere
           in: path
-          description: Code du cours enseigné par l'enseignant
+          description: Code de la matière enseignée
           required: true
           schema:
             type: string
@@ -205,63 +208,27 @@ paths:
               example:
                 nom: TOKIMAHERY
                 prenom: RAMAROZAKA
-                cours:
-                  - nom_du_cours: Algoritmique
-                    code_du_cours: PROG1
-                    duree: 2h
-                    # ... (autres cours)
+                email: toky.hei@gmail.com
+                matieres:
+                  - Nom_matiere: algorithme
+                    code_matiere: PROG1
+                  - Nom_matiere: web
+                    code_matiere: WEB1
+                  - Nom_matiere: base de donnee
+                    code_matiere: DONNEE1
+                  - Nom_matiere: java
+                    code_matiere: PROG2
+        "404":
+          description: Professeur non trouvé
 
-  /teacher:
-    post:
-      tags:
-        - teacher
-      summary: Ajouter un nouvel enseignant
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                nom:
-                  type: string
-                prenom:
-                  type: string
-                cours:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      nom_du_cours:
-                        type: string
-                      code_du_cours:
-                        type: string
-                      duree:
-                        type: string
-              example:
-                nom: Nouveau Nom
-                prenom: Nouveau Prénom
-                cours:
-                  - nom_du_cours: ...
-                    code_du_cours: ...
-                    duree: 2h
-      responses:
-        "201":
-          description: Création réussie
-          content:
-            application/json:
-              example:
-                message: Enseignant créé avec succès
-
-  /teacher/{code_du_cours}:
     put:
       tags:
         - teacher
-      summary: Mettre à jour les informations d'un enseignant par code du cours
+      summary: Mettre à jour les informations d'un professeur par code de matière
       parameters:
-        - name: code_du_cours
+        - name: code_matiere
           in: path
-          description: Code du cours enseigné par l'enseignant
+          description: Code de la matière enseignée
           required: true
           schema:
             type: string
@@ -276,39 +243,39 @@ paths:
                   type: string
                 prenom:
                   type: string
-                cours:
+                email:
+                  type: string
+                matieres:
                   type: array
                   items:
                     type: object
                     properties:
-                      nom_du_cours:
+                      Nom_matiere:
                         type: string
-                      code_du_cours:
-                        type: string
-                      duree:
+                      code_matiere:
                         type: string
               example:
                 nom: Lou
                 prenom: Andria
-                cours:
-                  - nom_du_cours: systeme et reseaux
-                    code_du_cours: SYS2
-                    duree: 2h
+                email: lou.hei@gmail.com
+                matieres:
+                  - Nom_matiere: systeme d exploitation
+                    code_matiere: SYS2
+
       responses:
         "200":
           description: Mise à jour réussie
         "404":
-          description: Enseignant non trouvé
+          description: Professeur non trouvé
 
-  /teacher/{code_du_cours}:
     delete:
       tags:
         - teacher
-      summary: Supprimer un enseignant par code du cours
+      summary: Supprimer les informations d'un professeur par code de matière
       parameters:
-        - name: code_du_cours
+        - name: code_matiere
           in: path
-          description: Code du cours enseigné par l'enseignant
+          description: Code de la matière enseignée
           required: true
           schema:
             type: string
@@ -316,4 +283,4 @@ paths:
         "204":
           description: Suppression réussie
         "404":
-          description: Enseignant non trouvé
+          description: Professeur non trouvé
