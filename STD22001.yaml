@@ -1,0 +1,319 @@
+openapi: 3.0.3
+info:
+  title: HEI ADMIN
+  description: API pour gérer les informations d'onboarding des étudiants de chez HEI
+  version: 1.0.0
+servers:
+  - url: https://hei-api-onboarding-etudiant.com
+tags:
+  - name: student
+    description: Opérations liées aux étudiants
+  - name: teacher
+    description: Opérations liées aux enseignants
+
+paths:
+  /student:
+    post:
+      tags:
+        - student
+      summary: Créer un nouvel étudiant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nom:
+                  type: string
+                prenom:
+                  type: string
+                email:
+                  type: string
+                date_de_naissance:
+                  type: string
+                programme_d_etude:
+                  type: string
+                groupe:
+                  type: string   
+              example:
+                nom: Nouveau Nom
+                prenom: Nouveau Prénom
+                email: hei.nom@gmail.com
+                date_de_naissance: date de naissance
+                programme_d_etude: L1
+                groupe: H.    
+      responses:
+        "201":
+          description: Création réussie
+          content:
+            application/json:
+              example:
+                message: Étudiant créé avec succès
+                reference: STD22012
+        "400":
+          description: Requête invalide
+
+  /student/{reference}:
+    get:
+      tags:
+        - student
+      summary: Obtenir les informations d'un étudiant par référence
+      parameters:
+        - name: reference
+          in: path
+          description: Référence de l'étudiant
+          required: true
+          schema:
+            type: string
+        - name: groupe
+          in: query
+          description: Groupe de l'étudiant (facultatif)
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Succès de la requête
+          content:
+            application/json:
+              example:
+                nom: ANDRIAMAHALY ARINAINA
+                prenom: Barthélemy Loiqua
+                reference: STD22001
+                email: hei.loiqua@gmail.com
+                date_de_naissance: 5 juillet 2004
+                programme_d_etude: L1 en informatique chez hei ivandry
+                groupe: H4
+        "404":
+          description: Étudiant non trouvé
+
+  /student/{reference}:
+    put:
+      tags:
+        - student
+      summary: Mettre à jour les informations d'un étudiant par référence
+      parameters:
+        - name: reference
+          in: path
+          description: Référence de l'étudiant
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nom:
+                  type: string
+                prenom:
+                  type: string
+                email:
+                  type: string
+                date_de_naissance:
+                  type: string
+                programme_d_etude:
+                  type: string
+                groupe:
+                  type: string 
+              example:
+                nom: Nouveau Nom
+                prenom: Nouveau Prénom
+                email: hei.nom@gmail.com
+                date_de_naissance: 4 fevrier 2002
+                programme_d_etude: Nouveau programme
+                groupe: H.
+      responses:
+        "200":
+          description: Mise à jour réussie
+        "404":
+          description: Étudiant non trouvé
+
+  /student/{reference}:
+    delete:
+      tags:
+        - student
+      summary: Supprimer les informations d'un étudiant par référence
+      parameters:
+        - name: reference
+          in: path
+          description: Référence de l'étudiant
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Suppression réussie
+        "404":
+          description: Étudiant non trouvé
+
+  /teacher:
+    get:
+      tags:
+        - teacher
+      summary: Obtenir la liste des enseignants
+      responses:
+        "200":
+          description: Succès de la requête
+          content:
+            application/json:
+              example:
+                - nom: TOKIMAHERY
+                  prenom: RAMAROZAKA
+                  cours:
+                    - nom_du_cours: Algoritmique
+                      code_du_cours: PROG1
+                      duree: 2h
+                    - nom_du_cours: web
+                      code_du_cours: WEB1
+                      duree: 2h
+                - nom: Sandrine
+                  prenom: Ramaroson
+                  cours:
+                    - nom_du_cours: Gestion de Projet
+                      code_du_cours: MGT1
+                      duree: 2h
+                 - nom: Bako
+                  prenom: Harry
+                  cours:
+                    - nom_du_cours: Systeme d exploitation
+                      code_du_cours: SYS1
+                      duree: 2h
+        "404":
+          description: Enseignants non trouvés
+
+  /teacher/{code_du_cours}:
+    get:
+      tags:
+        - teacher
+      summary: Obtenir les informations sur un enseignant par code du cours
+      parameters:
+        - name: code_du_cours
+          in: path
+          description: Code du cours enseigné par l'enseignant
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Succès de la requête
+          content:
+            application/json:
+              example:
+                nom: TOKIMAHERY
+                prenom: RAMAROZAKA
+                cours:
+                  - nom_du_cours: Algoritmique
+                    code_du_cours: PROG1
+                    duree: 2h
+                    # ... (autres cours)
+
+  /teacher:
+    post:
+      tags:
+        - teacher
+      summary: Ajouter un nouvel enseignant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nom:
+                  type: string
+                prenom:
+                  type: string
+                cours:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      nom_du_cours:
+                        type: string
+                      code_du_cours:
+                        type: string
+                      duree:
+                        type: string
+              example:
+                nom: Nouveau Nom
+                prenom: Nouveau Prénom
+                cours:
+                  - nom_du_cours: ...
+                    code_du_cours: ...
+                    duree: 2h
+      responses:
+        "201":
+          description: Création réussie
+          content:
+            application/json:
+              example:
+                message: Enseignant créé avec succès
+
+  /teacher/{code_du_cours}:
+    put:
+      tags:
+        - teacher
+      summary: Mettre à jour les informations d'un enseignant par code du cours
+      parameters:
+        - name: code_du_cours
+          in: path
+          description: Code du cours enseigné par l'enseignant
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nom:
+                  type: string
+                prenom:
+                  type: string
+                cours:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      nom_du_cours:
+                        type: string
+                      code_du_cours:
+                        type: string
+                      duree:
+                        type: string
+              example:
+                nom: Lou
+                prenom: Andria
+                cours:
+                  - nom_du_cours: systeme et reseaux
+                    code_du_cours: SYS2
+                    duree: 2h
+      responses:
+        "200":
+          description: Mise à jour réussie
+        "404":
+          description: Enseignant non trouvé
+
+  /teacher/{code_du_cours}:
+    delete:
+      tags:
+        - teacher
+      summary: Supprimer un enseignant par code du cours
+      parameters:
+        - name: code_du_cours
+          in: path
+          description: Code du cours enseigné par l'enseignant
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Suppression réussie
+        "404":
+          description: Enseignant non trouvé
