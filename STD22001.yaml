@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: HEI ADMIN
-  description: API pour gérer les informations d'onboarding des étudiants de chez HEI
+  description: API pour gérer les informations d'onboarding des étudiants et professeurs de chez HEI
   version: 1.0.0
 servers:
   - url: https://hei-api-onboarding-etudiant.com
@@ -9,7 +9,7 @@ tags:
   - name: student
     description: Opérations liées aux étudiants
   - name: teacher
-    description: Opérations liées aux professeur
+    description: Opérations liées aux professeurs
 
 paths:
   /student:
@@ -80,7 +80,6 @@ paths:
                 date_de_naissance: 5 juillet 2004
                 programme_d_etude: L1 HEI
                 groupe: H4
-
         "404":
           description: Étudiant non trouvé
 
@@ -100,7 +99,6 @@ paths:
           description: Suppression réussie
         "404":
           description: Étudiant non trouvé
-
     put:
       tags:
         - student
@@ -144,6 +142,7 @@ paths:
           description: Mise à jour réussie
         "404":
           description: Étudiant non trouvé
+
   /teacher:
     post:
       tags:
@@ -214,10 +213,7 @@ paths:
                     code_matiere: PROG1
                   - Nom_matiere: web
                     code_matiere: WEB1
-                  - Nom_matiere: base de donnee
-                    code_matiere: DONNEE1
-                  - Nom_matiere: java
-                    code_matiere: PROG2
+                  # ... (other courses)
         "404":
           description: Professeur non trouvé
 
@@ -261,7 +257,6 @@ paths:
                 matieres:
                   - Nom_matiere: systeme d exploitation
                     code_matiere: SYS2
-
       responses:
         "200":
           description: Mise à jour réussie
@@ -284,3 +279,152 @@ paths:
           description: Suppression réussie
         "404":
           description: Professeur non trouvé
+
+  /teachers: # New endpoint added
+    get:
+      tags:
+        - teacher
+      summary: Obtenir la liste de tous les professeurs
+      responses:
+        "200":
+          description: Succès de la requête
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TeacherOutput"
+              example:
+                - nom: TOKIMAHERY
+                  prenom: RAMAROZAKA
+                  email: toky.hei@gmail.com
+                  matieres:
+                    - Nom_matiere: algorithme
+                      code_matiere: PROG1
+                      jours_heures:
+                        - jour: Lundi
+                          debut: "08:00"
+                          fin: "10:00"
+                    - Nom_matiere: web
+                      code_matiere: WEB1
+                      jours_heures:
+                        - jour: Mercredi
+                          debut: "14:00"
+                          fin: "16:00"
+                    - Nom_matiere: base de donnée
+                      code_matiere: DONNEE1
+                      jours_heures:
+                        - jour: Vendredi
+                          debut: "14:00"
+                          fin: "16:00"
+
+                - nom: Lou
+                  prenom: Andria
+                  email: lou.hei@gmail.com
+                  matieres:
+                    - Nom_matiere: systeme d exploitation
+                      code_matiere: SYS2
+                      jours_heures:
+                        - jour: Vendredi
+                          debut: "13:00"
+                          fin: "14:00"
+
+                - nom: Sandrine
+                  prenom: Ramaroson
+                  email: sandrine.hei@gmail.com
+                  matieres:
+                    - Nom_matiere: gestion de projets
+                      code_matiere: MGT1
+                      jours_heures:
+                        - jour: Samedi
+                          debut: "10:00"
+                          fin: "12:00"
+
+        "404":
+          description: Aucun professeur trouvé
+
+components:
+  schemas:
+    StudentInput:
+      type: object
+      properties:
+        nom:
+          type: string
+        prenom:
+          type: string
+        email:
+          type: string
+        date_de_naissance:
+          type: string
+        programme_d_etude:
+          type: string
+        groupe:
+          type: string
+          enum: [H1, H2, H3, H4]
+
+    StudentOutput:
+      type: object
+      properties:
+        nom:
+          type: string
+        prenom:
+          type: string
+        reference:
+          type: string
+        email:
+          type: string
+        date_de_naissance:
+          type: string
+        programme_d_etude:
+          type: string
+        groupe:
+          type: string
+
+    TeacherInput:
+      type: object
+      properties:
+        nom:
+          type: string
+        prenom:
+          type: string
+        email:
+          type: string
+        matieres:
+          type: array
+          items:
+            type: object
+            properties:
+              Nom_matiere:
+                type: string
+              code_matiere:
+                type: string
+
+    TeacherOutput:
+      type: object
+      properties:
+        nom:
+          type: string
+        prenom:
+          type: string
+        email:
+          type: string
+        matieres:
+          type: array
+          items:
+            type: object
+            properties:
+              Nom_matiere:
+                type: string
+              code_matiere:
+                type: string
+              jours_heures:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    jour:
+                      type: string
+                    debut:
+                      type: string
+                    fin:
+                      type: string
