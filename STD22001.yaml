@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: HEI ADMIN
-  description: API pour gérer les informations d'onboarding des étudiants et professeurs de chez HEI
+  description: API pour gérer les informations d'onboarding des étudiants de chez HEI
   version: 1.0.0
 servers:
   - url: https://hei-api-onboarding-etudiant.com
